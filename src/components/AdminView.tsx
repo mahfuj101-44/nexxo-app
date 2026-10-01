@@ -38,6 +38,7 @@ import {
   ShieldCheck,
   Users,
   Settings,
+  Smartphone,
   FileText,
   Search,
   Check,
@@ -2105,6 +2106,55 @@ export const AdminView: React.FC<AdminViewProps> = ({ currentUser }) => {
                       </div>
                     </div>
                   </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Android APK Distribution Settings */}
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+                <Smartphone className="w-4 h-4" />
+                <h3 className="font-bold text-sm text-slate-900 dark:text-white">Android Mobile APK Distribution</h3>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                Configure the direct APK download link that users see when clicking &quot;Download APK&quot; or scanning the in-app QR code. You can paste your GitHub Release APK direct download URL, Firebase Storage URL, or Cloud CDN link here.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1 block">
+                    Android APK Download URL
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://github.com/YOUR_USERNAME/REPO/releases/download/.../app-debug.apk"
+                    value={platformSettings.androidApkDownloadUrl || ''}
+                    onChange={(e) =>
+                      setPlatformSettings({ ...platformSettings, androidApkDownloadUrl: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Leave blank to default to internal path (<code className="text-indigo-500">/nexxo.apk</code>).
+                  </span>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1 block">
+                    Android Version Display Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. v1.0.0 (Build 1)"
+                    value={platformSettings.androidVersionName || ''}
+                    onChange={(e) =>
+                      setPlatformSettings({ ...platformSettings, androidVersionName: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Shown in the Download APK modal for version tracking.
+                  </span>
                 </div>
               </div>
             </div>

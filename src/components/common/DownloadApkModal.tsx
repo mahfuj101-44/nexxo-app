@@ -9,7 +9,9 @@ import {
   QrCode,
   Copy,
   AlertTriangle,
-  FileCheck
+  FileCheck,
+  Github,
+  Sparkles,
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { PlatformSettings } from '../../types';
@@ -160,6 +162,35 @@ export const DownloadApkModal: React.FC<DownloadApkModalProps> = ({
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* GitHub Actions Cloud APK Build Option */}
+          <div className="p-4 rounded-2xl bg-slate-900 text-white border border-slate-800 space-y-3 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Github className="w-4 h-4 text-white" />
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  GitHub Actions Cloud Builder
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    CI / CD
+                  </span>
+                </span>
+              </div>
+              <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" /> Auto Build Ready
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              Whenever you push commits to GitHub, the automated cloud pipeline builds the latest <code className="text-indigo-400">app-debug.apk</code> and uploads it to <b>Actions &gt; Artifacts</b> for instant 1-click download.
+            </p>
+            <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80 text-[11px] text-slate-300 space-y-1 font-mono">
+              <div className="text-indigo-400 font-sans font-bold text-[10px] uppercase tracking-wider">
+                Download via GitHub in 3 Clicks:
+              </div>
+              <div>1. Open your GitHub Repository &rarr; Click <span className="text-white font-bold">Actions</span></div>
+              <div>2. Click latest <span className="text-emerald-400">Build NEXXO Android APK</span> run</div>
+              <div>3. Under <span className="text-amber-400 font-bold">Artifacts</span> &rarr; Click <span className="text-white underline">NEXXO-Android-Debug-v1.0</span></div>
             </div>
           </div>
 

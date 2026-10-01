@@ -6,7 +6,16 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   server: {
     androidScheme: 'https',
-    cleartext: false
+    cleartext: false,
+    allowNavigation: [
+      'accounts.google.com',
+      '*.google.com',
+      '*.googleusercontent.com',
+      '*.firebaseapp.com',
+      'gold-terminus-p9brs.firebaseapp.com',
+      'apis.google.com',
+      'identitytoolkit.googleapis.com'
+    ]
   },
   android: {
     allowMixedContent: false,

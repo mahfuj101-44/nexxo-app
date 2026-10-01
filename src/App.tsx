@@ -332,9 +332,15 @@ export default function App() {
 
     // 3. Complete any pending redirect sign-in from WebView
     import('firebase/auth').then(({ getRedirectResult }) => {
-      getRedirectResult(auth).catch((err) => {
-        console.debug('Firebase redirect auth check:', err);
-      });
+      getRedirectResult(auth)
+        .then((result) => {
+          if (result?.user) {
+            setFirebaseUser(result.user);
+          }
+        })
+        .catch((err) => {
+          console.debug('Firebase redirect auth check:', err);
+        });
     });
 
     return () => {

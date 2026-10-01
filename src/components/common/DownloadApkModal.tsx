@@ -30,10 +30,17 @@ export const DownloadApkModal: React.FC<DownloadApkModalProps> = ({
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
   const [copiedLink, setCopiedLink] = useState(false);
 
-  // Default to hosted APK path or configured download URL
+  const GITHUB_RELEASE_APK_URL =
+    'https://github.com/mahfuj101-44/nexxo-app/releases/download/v1.0.0/nexxo-app-v1.0.0-debug.apk';
+  const GITHUB_ACTIONS_RUN_URL =
+    'https://github.com/mahfuj101-44/nexxo-app/actions/runs/36918790889';
+
+  // Default to configured download URL or direct GitHub release APK
   const apkDownloadUrl =
     platformSettings?.androidApkDownloadUrl ||
-    (typeof window !== 'undefined' ? `${window.location.origin}/nexxo.apk` : '/nexxo.apk');
+    (typeof window !== 'undefined' && window.location.origin
+      ? `${window.location.origin}/nexxo.apk`
+      : GITHUB_RELEASE_APK_URL);
 
   useEffect(() => {
     if (isOpen && apkDownloadUrl) {
@@ -191,6 +198,25 @@ export const DownloadApkModal: React.FC<DownloadApkModalProps> = ({
               <div>1. Open your GitHub Repository &rarr; Click <span className="text-white font-bold">Actions</span></div>
               <div>2. Click latest <span className="text-emerald-400">Build NEXXO Android APK</span> run</div>
               <div>3. Under <span className="text-amber-400 font-bold">Artifacts</span> &rarr; Click <span className="text-white underline">NEXXO-Android-Debug-v1.0</span></div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <a
+                href={GITHUB_RELEASE_APK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-w-[180px] px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm"
+              >
+                <Download className="w-3.5 h-3.5" /> Direct Release APK (v1.0.0)
+              </a>
+              <a
+                href={GITHUB_ACTIONS_RUN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium text-xs flex items-center gap-1.5 transition-all"
+              >
+                <ExternalLink className="w-3.5 h-3.5" /> View Actions Run #3
+              </a>
             </div>
           </div>
 

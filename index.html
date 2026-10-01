@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4F46E5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>NEXXO - Next-Gen Real-Time Communication</title>
+    <meta name="description" content="A modern next-generation real-time messaging and communication platform." />
+    <meta property="og:title" content="NEXXO - Next-Gen Real-Time Communication" />
+    <meta property="og:description" content="A modern next-generation real-time messaging and communication platform." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      (function() {
+        try {
+          var hasDefaultedV2 = localStorage.getItem('nexxo_theme_default_v2');
+          if (!hasDefaultedV2) {
+            localStorage.setItem('nexxo_theme_default_v2', 'true');
+            localStorage.setItem('nexxo_theme_mode', 'light');
+            localStorage.setItem('nexxo_theme', 'light');
+          }
+          var mode = localStorage.getItem('nexxo_theme_mode') || 'light';
+          var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var isHighContrast = mode === 'high-contrast';
+          if (isDark || isHighContrast) {
+            document.documentElement.classList.add('dark');
+            if (isHighContrast) document.documentElement.classList.add('high-contrast');
+            document.documentElement.style.colorScheme = 'dark';
+          } else {
+            document.documentElement.classList.remove('dark', 'high-contrast');
+            document.documentElement.style.colorScheme = 'light';
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

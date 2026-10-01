@@ -1,0 +1,441 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Registered NEXXO user public and operational profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "nexxoId": { "type": "string", "maxLength": 32, "pattern": "^NX-[A-Z0-9]{4}-[A-Z0-9]{4}$" },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "username": { "type": "string", "maxLength": 30, "pattern": "^[a-zA-Z0-9_]{3,30}$" },
+        "usernameLower": { "type": "string", "maxLength": 30 },
+        "photoURL": { "type": "string" },
+        "bio": { "type": "string", "maxLength": 280 },
+        "status": { "type": "string", "enum": ["active", "suspended"] },
+        "presence": { "type": "string", "enum": ["online", "offline", "away", "busy", "dnd"] },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "lastActiveAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "settings": { "type": "object" }
+      },
+      "required": ["id", "nexxoId", "displayName", "username", "usernameLower", "status", "presence", "role", "createdAt"]
+    },
+    "Username": {
+      "title": "Username Claim",
+      "description": "Unique username registry to prevent race conditions",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "createdAt"]
+    },
+    "NexxoId": {
+      "title": "Permanent NEXXO ID Record",
+      "description": "Registry of allocated permanent NEXXO IDs",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "assignedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "assignedAt"]
+    },
+    "Connection": {
+      "title": "User Connection",
+      "description": "Established connection between two NEXXO users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "user1Id": { "type": "string", "maxLength": 128 },
+        "user2Id": { "type": "string", "maxLength": 128 },
+        "users": { "type": "array" },
+        "status": { "type": "string", "enum": ["connected", "blocked"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "user1Id", "user2Id", "users", "status", "createdAt"]
+    },
+    "ConnectionRequest": {
+      "title": "Connection Request",
+      "description": "Pending connection request between users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "fromUserId": { "type": "string", "maxLength": 128 },
+        "toUserId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["pending", "accepted", "declined"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "fromUserId", "toUserId", "status", "createdAt"]
+    },
+    "Chat": {
+      "title": "Chat Conversation",
+      "description": "Direct and group messaging conversation channel",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "participants": { "type": "array" },
+        "isGroup": { "type": "boolean" },
+        "name": { "type": "string", "maxLength": 120 },
+        "avatar": { "type": "string" },
+        "description": { "type": "string", "maxLength": 500 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "admins": { "type": "array" },
+        "pinned": { "type": "boolean" },
+        "pinnedBy": { "type": "array" },
+        "lastMessage": { "type": "string", "maxLength": 1000 },
+        "lastMessageSenderId": { "type": "string", "maxLength": 128 },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "participants", "createdAt"]
+    },
+    "Message": {
+      "title": "Chat Message",
+      "description": "Direct or group message within a chat conversation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "chatId": { "type": "string", "maxLength": 128 },
+        "senderId": { "type": "string", "maxLength": 128 },
+        "senderName": { "type": "string", "maxLength": 100 },
+        "senderAvatar": { "type": "string" },
+        "isSystem": { "type": "boolean" },
+        "text": { "type": "string", "maxLength": 4000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "chatId", "senderId", "createdAt"]
+    },
+    "AdminRole": {
+      "title": "Admin Role Definition",
+      "description": "Authorized administrator record",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "role": { "type": "string", "enum": ["superadmin", "admin"] },
+        "assignedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role", "assignedAt"]
+    },
+    "PlatformSettings": {
+      "title": "Platform Settings",
+      "description": "Global operational configuration for NEXXO platform",
+      "type": "object",
+      "properties": {
+        "registrationEnabled": { "type": "boolean" },
+        "discoveryEnabled": { "type": "boolean" },
+        "maintenanceMode": { "type": "boolean" },
+        "systemNotice": { "type": "string", "maxLength": 500 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["registrationEnabled", "discoveryEnabled", "maintenanceMode"]
+    },
+    "AuditLog": {
+      "title": "Security Audit Log",
+      "description": "Record of security or admin actions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "actorId": { "type": "string", "maxLength": 128 },
+        "action": { "type": "string", "maxLength": 100 },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "details": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "actorId", "action", "createdAt"]
+    },
+    "Group": {
+      "title": "Group Conversation",
+      "description": "Multi-user group conversation with roles and permissions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "photoURL": { "type": "string", "maxLength": 2048 },
+        "description": { "type": "string", "maxLength": 500 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "admins": { "type": "array" },
+        "members": { "type": "array" },
+        "memberCount": { "type": "number" },
+        "settings": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "ownerId", "admins", "members", "createdAt"]
+    },
+    "GroupMessage": {
+      "title": "Group Message",
+      "description": "Message posted within a group conversation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "groupId": { "type": "string", "maxLength": 128 },
+        "senderId": { "type": "string", "maxLength": 128 },
+        "senderName": { "type": "string", "maxLength": 100 },
+        "text": { "type": "string", "maxLength": 4000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "groupId", "senderId", "senderName", "createdAt"]
+    },
+    "Story": {
+      "title": "User Story / Status",
+      "description": "Ephemeral 24-hour status update",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "enum": ["text", "image", "video"] },
+        "caption": { "type": "string", "maxLength": 1000 },
+        "privacy": { "type": "string", "enum": ["everyone", "connections", "selected"] },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "type", "privacy", "expiresAt", "createdAt"]
+    },
+    "Channel": {
+      "title": "NEXXO Channel",
+      "description": "Broadcast content channel with subscribers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "handle": { "type": "string", "maxLength": 50 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "subscribers": { "type": "array" },
+        "isPublic": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "handle", "ownerId", "createdAt"]
+    },
+    "ChannelPost": {
+      "title": "Channel Post",
+      "description": "Publication post in a channel",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "channelId": { "type": "string", "maxLength": 128 },
+        "authorId": { "type": "string", "maxLength": 128 },
+        "content": { "type": "string", "maxLength": 5000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "channelId", "authorId", "content", "createdAt"]
+    },
+    "Community": {
+      "title": "NEXXO Community",
+      "description": "Multi-group organization hub",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "members": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "ownerId", "members", "createdAt"]
+    },
+    "Call": {
+      "title": "WebRTC Call Session",
+      "description": "Signaling document for WebRTC voice and video calls",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "callerId": { "type": "string", "maxLength": 128 },
+        "calleeId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "enum": ["voice", "video"] },
+        "status": { "type": "string", "enum": ["ringing", "accepted", "rejected", "ended", "missed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "callerId", "calleeId", "type", "status", "createdAt"]
+    },
+    "Report": {
+      "title": "Content / User Moderation Report",
+      "description": "User submitted safety and moderation report",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "reporterId": { "type": "string", "maxLength": 128 },
+        "targetType": { "type": "string", "enum": ["user", "message", "group", "channel", "story"] },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "reason": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["pending", "resolved", "dismissed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "reporterId", "targetType", "targetId", "reason", "status", "createdAt"]
+    },
+    "Block": {
+      "title": "User Block Record",
+      "description": "Bidirectional interaction restriction between users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "blockerId": { "type": "string", "maxLength": 128 },
+        "blockedId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "blockerId", "blockedId", "createdAt"]
+    },
+    "Notification": {
+      "title": "User In-App Notification",
+      "description": "Real-time user notification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 150 },
+        "body": { "type": "string", "maxLength": 500 },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "title", "body", "isRead", "createdAt"]
+    },
+    "Presence": {
+      "title": "Real-time User Presence",
+      "description": "User online/away/offline presence status and heartbeat timestamp",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "presence": { "type": "string", "enum": ["online", "offline", "away", "busy", "dnd"] },
+        "lastActiveAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "presence"]
+    },
+    "MediaChunk": {
+      "title": "Media Chunk",
+      "description": "Chunked media data for resilient audio, video, photo, and file messaging",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "mediaId": { "type": "string", "maxLength": 128 },
+        "chunkIndex": { "type": "number" },
+        "totalChunks": { "type": "number" },
+        "data": { "type": "string" },
+        "mimeType": { "type": "string", "maxLength": 100 },
+        "name": { "type": "string", "maxLength": 255 },
+        "size": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "mediaId", "chunkIndex", "totalChunks", "data", "createdAt"]
+    },
+    "UserMedia": {
+      "title": "User Media Library Item",
+      "description": "User uploaded media categorized into automatic Images, Videos, Documents, and Audio vaults",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "enum": ["image", "video", "audio", "document", "story_export"] },
+        "url": { "type": "string" },
+        "storagePath": { "type": "string", "maxLength": 512 },
+        "name": { "type": "string", "maxLength": 255 },
+        "size": { "type": "number" },
+        "mimeType": { "type": "string", "maxLength": 128 },
+        "duration": { "type": "number" },
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "thumbnailUrl": { "type": "string" },
+        "source": { "type": "string", "enum": ["chat", "story", "upload", "camera"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "type", "url", "name", "size", "mimeType", "source", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/userMedia/{mediaId}": {
+      "schema": "UserMedia",
+      "description": "Personal media library documents categorized by Images, Videos, and Documents"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile collection"
+    },
+    "/presence/{userId}": {
+      "schema": "Presence",
+      "description": "Real-time user presence tracking collection"
+    },
+    "/usernames/{usernameLower}": {
+      "schema": "Username",
+      "description": "Username uniqueness lock mapping"
+    },
+    "/nexxoIds/{nexxoId}": {
+      "schema": "NexxoId",
+      "description": "Permanent NEXXO ID registry"
+    },
+    "/connections/{connectionId}": {
+      "schema": "Connection",
+      "description": "Established connection collection"
+    },
+    "/connectionRequests/{requestId}": {
+      "schema": "ConnectionRequest",
+      "description": "Pending, accepted, or declined connection requests"
+    },
+    "/chats/{chatId}": {
+      "schema": "Chat",
+      "description": "1-on-1 direct conversation headers"
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Chat messages subcollection"
+    },
+    "/groups/{groupId}": {
+      "schema": "Group",
+      "description": "Group chat rooms"
+    },
+    "/groups/{groupId}/messages/{messageId}": {
+      "schema": "GroupMessage",
+      "description": "Group chat messages subcollection"
+    },
+    "/stories/{storyId}": {
+      "schema": "Story",
+      "description": "Ephemeral 24h status collection"
+    },
+    "/channels/{channelId}": {
+      "schema": "Channel",
+      "description": "Broadcast channels collection"
+    },
+    "/channels/{channelId}/posts/{postId}": {
+      "schema": "ChannelPost",
+      "description": "Channel posts subcollection"
+    },
+    "/communities/{communityId}": {
+      "schema": "Community",
+      "description": "Communities directory"
+    },
+    "/calls/{callId}": {
+      "schema": "Call",
+      "description": "WebRTC voice and video calls signaling"
+    },
+    "/reports/{reportId}": {
+      "schema": "Report",
+      "description": "Safety moderation reports"
+    },
+    "/blocks/{blockId}": {
+      "schema": "Block",
+      "description": "User block mappings"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "User in-app notifications"
+    },
+    "/adminRoles/{userId}": {
+      "schema": "AdminRole",
+      "description": "Authoritative list of administrative users"
+    },
+    "/platformSettings/{settingId}": {
+      "schema": "PlatformSettings",
+      "description": "System-wide configurable parameters"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Administrative actions audit log"
+    },
+    "/mediaChunks/{chunkId}": {
+      "schema": "MediaChunk",
+      "description": "Reliable audio, video, and file chunk collection"
+    }
+  }
+}
